@@ -5,9 +5,9 @@ on: [pull_request, workflow_dispatch]
 jobs:
   detect-build-system:
     runs-on: ubuntu-latest
-
     steps:
     - name: Detect Build System
+      id: detect-build-system
       run: |
         if [[ -f "Cargo.toml" ]]; then
           echo "Rust - Cargo"
