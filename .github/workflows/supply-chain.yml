@@ -1,16 +1,23 @@
 name: Supply Chain Scans and Checks
 
-on: [pull_request, workflow_dispatch]
+on: [pull_request, push, workflow_dispatch]
 
 jobs:
   dependency-review:
-    if: ${{ github.event_name == 'pull_request' }}
+    if: ${{ contains(fromJSON('["push", "pull_request", "workflow_dispatch"]'), github.event_name) }}
     runs-on: ubuntu-latest
     steps:
       - name: 'Checkout Repository'
         uses: actions/checkout@v3
-      - name: 'Dependency Review'
+      - name: 'Dependency Review PR'
+        if: ${{ github.event_name == 'pull_request' }}
         uses: actions/dependency-review-action@v2
+      - name: 'Dependency Review Push'
+        if: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' }}
+        uses: actions/dependency-review-action@v2        
+        with:
+          base-ref: github.ref~1
+          head-ref: github.ref
   detect-build-system:
     runs-on: ubuntu-latest
     steps:
