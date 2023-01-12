@@ -26,4 +26,4 @@ jobs:
           echo "::set-output name=build_system::Unable to detect build system."
         fi
     - name: Print Build System
-      run: echo "Build system: ${{ steps.detect-build-system.outputs.build_system }}"
+      run: echo "Build system:${{ steps.detect-build-system.outputs.build_system }}"
