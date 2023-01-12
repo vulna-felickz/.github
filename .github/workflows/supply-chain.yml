@@ -11,19 +11,19 @@ jobs:
       run: |
         if [[ -f "Cargo.toml" ]]; then
           echo "Rust - Cargo"
-          echo "::set-output name=build_system::Rust - Cargo"
+          echo "build_system=Rust - Cargo" >> $GITHUB_OUTPUT
         elif [[ -f "Makefile" ]]; then
           echo "Make"
-          echo "::set-output name=build_system::Make"
+          echo "build_system=Make" >> $GITHUB_OUTPUT
         elif [[ -f "build.gradle" ]]; then
           echo "Java - Gradle"
-          echo "::set-output name=build_system::Java - Gradle"
+          echo "build_system=Java - Gradle" >> $GITHUB_OUTPUT
         elif [[ -f "pom.xml" ]]; then
-          echo "Java - Maven"
-          echo "::set-output name=build_system::Java - Maven"
+          echo "Java - Maven"        
+          echo "build_system=Java - Maven" >> $GITHUB_OUTPUT
         else
           echo "Unable to detect build system."
-          echo "::set-output name=build_system::Unable to detect build system."
+          echo "build_system=N/A" >> $GITHUB_OUTPUT
         fi
     - name: Print Build System
       run: echo "Build system:${{ steps.detect-build-system.outputs.build_system }}"
