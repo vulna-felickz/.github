@@ -1,6 +1,6 @@
 name: Run CodeQL Failing Workflow Org Script
 
-on: repository_dispatch
+on: push, repository_dispatch
 
 jobs:
   run-script:
