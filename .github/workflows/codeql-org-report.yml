@@ -5,7 +5,8 @@ jobs:
     runs-on: ubuntu-latest
   
     steps:
-    - pwsh: |
+    - shell: pwsh
+      run: |
         # find any CodeQL named runs and get their latest status
         # - use the gh cli (easy auth and query apis)
         # - search for all repos in an org
