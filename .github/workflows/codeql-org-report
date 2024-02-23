@@ -1,0 +1,28 @@
+name: Run CodeQL Failing Workflow Org Script
+
+on: repository_dispatch
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+  
+    steps:
+    - pwsh: |
+        # find any CodeQL named runs and get their latest status
+        # - use the gh cli (easy auth and query apis)
+        # - search for all repos in an org
+        # - workflows named "CodeQl" running in an action - EXCLUDE PRs
+        # - Report if the scans were building successful or not (conclusion)
+        
+        
+        $org = "vulna-felickz"; `
+        gh api /orgs/$org/repos `
+        | jq -r '.[] | .name' `
+        | %{ `
+            $name = $_; gh api /repos/$org/$_/actions/workflows `
+            | jq '.workflows[] | select(.name=="CodeQL") | .id' `
+            | % { gh api /repos/$org/$name/actions/workflows/$_/runs?exclude_pull_requests=true } `
+            | jq -r '.workflow_runs[0] | "\(.conclusion) - \(.html_url)"'`
+            | %{ "$_ ($name)" } `
+        }
+
