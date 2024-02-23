@@ -2,7 +2,7 @@ name: Run CodeQL Failing Workflow Org Script
 on: 
   workflow_dispatch:
   schedule:
-    - cron: '36 0 * * 2'
+    - cron: '0 */6 * * *'
 jobs:
   run-script:
     runs-on: ubuntu-latest
