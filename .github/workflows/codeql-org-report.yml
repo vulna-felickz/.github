@@ -6,6 +6,8 @@ jobs:
   
     steps:
     - shell: pwsh
+      env:
+        GH_TOKEN: ${{ github.token }}
       run: |
         # find any CodeQL named runs and get their latest status
         # - use the gh cli (easy auth and query apis)
