@@ -16,14 +16,26 @@ jobs:
         # - Report if the scans were building successful or not (conclusion)
         
         
-        $org = "vulna-felickz"; `
+        $org = "vulna-felickz"
+        $csv = "CodeQLWorkflowStatus.csv"
+        $header = "Org,Repo,Conclusion,Workflow_Url"
+        Set-Content -Path "./$csv" -Value $header
+        
         gh api /orgs/$org/repos `
         | jq -r '.[] | .name' `
         | %{ `
             $name = $_; gh api /repos/$org/$_/actions/workflows `
             | jq '.workflows[] | select(.name=="CodeQL") | .id' `
             | % { gh api /repos/$org/$name/actions/workflows/$_/runs?exclude_pull_requests=true } `
-            | jq -r '.workflow_runs[0] | "\(.conclusion) - \(.html_url)"'`
-            | %{ "$_ ($name)" } `
+            | jq -r '.workflow_runs[0] | "\(.conclusion),\(.html_url)"'`
+            | %{ "$org,$name,$_" } `
+            | Add-Content -Path "./$csv"
         }
+        
+        Import-Csv -Path "./$csv" | Format-Table
+    - name: Upload CSV
+      uses: actions/upload-artifact@v3
+      with:
+        path: ${{runner.workspace}}/*.csv
+        
 
