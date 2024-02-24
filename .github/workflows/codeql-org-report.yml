@@ -55,7 +55,7 @@ jobs:
             Install-Module -Name FormatMarkdownTable
         }
         
-        $markdownSummary = Import-Csv -Path "./$csv" | Format-MarkdownTableTableStyle -ShowMarkdown -DoNotCopyToClipboard
+        $markdownSummary = Import-Csv -Path "./$csv" | Format-MarkdownTableTableStyle -ShowMarkdown -DoNotCopyToClipboard -HideStandardOutput
         $markdownSummary > $env:GITHUB_STEP_SUMMARY 
     - name: Upload CSV
       uses: actions/upload-artifact@v3
