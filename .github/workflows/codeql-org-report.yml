@@ -19,20 +19,20 @@ jobs:
         # - Report if the scans were building successful or not (conclusion)
         
         
-        $org = "vulna-felickz"
+        $org = "${{ github.repository_owner }}"
         $csv = "CodeQLWorkflowStatus.csv"
         $header = "Org,Repo,Conclusion,Workflow_Url"
         Set-Content -Path "./$csv" -Value $header
         
-        gh api /orgs/$org/repos `
+        gh api /orgs/$org/repos --paginate `
         | jq -r '.[] | .name' `
         | %{ `
-            $name = $_; gh api /repos/$org/$_/actions/workflows `
+            $name = $_; gh api /repos/$org/$_/actions/workflows --paginate `
             | jq '.workflows[] | select(.name=="CodeQL") | .id' `
             | % { gh api /repos/$org/$name/actions/workflows/$_/runs?exclude_pull_requests=true } `
-            | jq -r '.workflow_runs[0] | "\(.conclusion),\(.html_url)"'`
+            | jq -r '.workflow_runs[0] | "\(.conclusion),\(.html_url)"' `
             | %{ "$org,$name,$_" } `
-            | Add-Content -Path "./$csv"
+            | Add-Content -Path "./$csv" `
         }
         
         Import-Csv -Path "./$csv" | Format-Table
