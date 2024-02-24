@@ -26,7 +26,7 @@ jobs:
         
         $org = "${{ github.repository_owner }}"
         $csv = "CodeQLWorkflowStatus.csv"
-        $header = "Conclusion,Is_Default,Workflow_Url,Org,Repo,Workflow_Path"
+        $header = "Conclusion,Workflow_Url,Is_Default,Org,Repo,Workflow_Path"
         Set-Content -Path "./$csv" -Value $header
         
         gh api /orgs/$org/repos --paginate `
@@ -44,6 +44,7 @@ jobs:
             | Add-Content -Path "./$csv" `
         }
         
+        
         #check if FormatMarkdownTable module is installed
         if (Get-Module -ListAvailable -Name FormatMarkdownTable -ErrorAction SilentlyContinue) {
             Write-Output "FormatMarkdownTable module is installed"
@@ -57,7 +58,11 @@ jobs:
         }
         
         $markdownSummary = Import-Csv -Path "./$csv" | Format-MarkdownTableTableStyle -ShowMarkdown -DoNotCopyToClipboard -HideStandardOutput
-        $markdownSummary > $env:GITHUB_STEP_SUMMARY 
+        $markdownSummary > $env:GITHUB_STEP_SUMMARY
+        
+        if ($null -eq $env:GITHUB_ACTIONS) {
+            $markdownSummary
+        }
     - name: Upload CSV
       uses: actions/upload-artifact@v3
       with:
