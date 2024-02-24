@@ -1,3 +1,4 @@
+#Script Adapted for actions from here: https://github.com/felickz/scripts/blob/main/pwsh/Get-GitHubReposWithFailingCodeQL.ps1
 name: Run CodeQL Failing Workflow Org Script
 on: 
   push:
@@ -25,7 +26,7 @@ jobs:
         
         $org = "${{ github.repository_owner }}"
         $csv = "CodeQLWorkflowStatus.csv"
-        $header = "Conclusion,Workflow_Url,Org,Repo,Workflow_Path"
+        $header = "Conclusion,Is_Default,Workflow_Url,Org,Repo,Workflow_Path"
         Set-Content -Path "./$csv" -Value $header
         
         gh api /orgs/$org/repos --paginate `
@@ -39,7 +40,7 @@ jobs:
                 gh api /repos/$org/$name/actions/workflows/$($workflow.id)/runs?exclude_pull_requests=true `
                 } `
             | jq -r '.workflow_runs[0] | "\(.conclusion),\(.html_url)"' `
-            | %{ "$_,$org,$name,$($workflow.path)" } `
+            | %{ "$_,$($workflow.path.StartsWith("dynamic/")),$org,$name,$($workflow.path)" } `
             | Add-Content -Path "./$csv" `
         }
         
