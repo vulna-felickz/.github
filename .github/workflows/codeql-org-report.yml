@@ -10,6 +10,7 @@ jobs:
     steps:
     - shell: pwsh
       env:
+        # PASS In a ${{secrets.MY_GH_TOKEN}} for private repos!
         GH_TOKEN: ${{ github.token }}
       run: |
         # find any CodeQL named runs and get their latest status
@@ -21,17 +22,21 @@ jobs:
         
         $org = "${{ github.repository_owner }}"
         $csv = "CodeQLWorkflowStatus.csv"
-        $header = "Org,Repo,Conclusion,Workflow_Url"
+        $header = "Conclusion,Workflow_Url,Org,Repo,Workflow_Path"
         Set-Content -Path "./$csv" -Value $header
         
         gh api /orgs/$org/repos --paginate `
         | jq -r '.[] | .name' `
         | %{ `
             $name = $_; gh api /repos/$org/$_/actions/workflows --paginate `
-            | jq '.workflows[] | select(.name=="CodeQL") | .id' `
-            | % { gh api /repos/$org/$name/actions/workflows/$_/runs?exclude_pull_requests=true } `
+            # Need jq -c (compact) so that the JSON removes newlines and can be converted below `
+            | jq -c '.workflows[] | select(.name=="CodeQL") | {id: .id, path: .path}' `
+            | %{ `
+                $workflow = $_ | ConvertFrom-Json; `
+                gh api /repos/$org/$name/actions/workflows/$($workflow.id)/runs?exclude_pull_requests=true `
+                } `
             | jq -r '.workflow_runs[0] | "\(.conclusion),\(.html_url)"' `
-            | %{ "$org,$name,$_" } `
+            | %{ "$_,$org,$name,$($workflow.path)" } `
             | Add-Content -Path "./$csv" `
         }
         
