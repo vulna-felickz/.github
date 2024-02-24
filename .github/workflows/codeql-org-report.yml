@@ -8,11 +8,12 @@ on:
   schedule:
     - cron: '0 */6 * * *'
 jobs:
-  run-script:
+  codeql-workflow-status-report:
     runs-on: ubuntu-latest
   
     steps:
-    - shell: pwsh
+    - name: 'Run CodeQL Workflow Status Report' 
+      shell: pwsh
       env:
         # PASS In a ${{secrets.MY_GH_TOKEN}} for private repos!
         GH_TOKEN: ${{ github.token }}
@@ -63,7 +64,7 @@ jobs:
         if ($null -eq $env:GITHUB_ACTIONS) {
             $markdownSummary
         }
-    - name: Upload CSV
+    - name: Upload CodeQL Report CSV as Artifact
       uses: actions/upload-artifact@v3
       with:
         path: ./*.csv
