@@ -18,7 +18,7 @@ jobs:
       with:
         token: ${{ github.token }}
     - name: Upload CodeQL Report CSV as Artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: "CodeQLReport-${{ github.run_id }}"
         path: ./*.csv
