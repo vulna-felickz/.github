@@ -17,4 +17,4 @@ jobs:
     - name: Use felickz/codeql-report action
       uses: felickz/codeql-report@main
       with:
-        github-token: ${{ github.token }}
+        token: ${{ github.token }}
