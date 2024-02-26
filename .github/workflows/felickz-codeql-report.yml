@@ -15,6 +15,6 @@ jobs:
 
     steps:
     - name: Use felickz/codeql-report action
-      uses: felickz/codeql-report@v1
+      uses: felickz/codeql-report@main
       with:
         github-token: ${{ github.token }}
