@@ -10,9 +10,8 @@ on:
     - cron: '0 */6 * * *'
 
 jobs:
-  build:
+  run-report:
     runs-on: ubuntu-latest
-
     steps:
     - name: Use felickz/codeql-report action
       uses: felickz/codeql-report@main
