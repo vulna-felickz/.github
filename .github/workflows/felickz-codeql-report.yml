@@ -3,7 +3,7 @@ name: CodeQL Report
 on:
   push:
     paths:
-      - '.github/workflows/codeql-org-report.yml'
+      - '.github/workflows/felickz-codeql-report.yml'
   workflow_dispatch:
   #every 6 hours
   schedule:
