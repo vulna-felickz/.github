@@ -1,0 +1,20 @@
+name: CodeQL Report
+
+on:
+  push:
+    paths:
+      - '.github/workflows/codeql-org-report.yml'
+  workflow_dispatch:
+  #every 6 hours
+  schedule:
+    - cron: '0 */6 * * *'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Use felickz/codeql-report action
+      uses: felickz/codeql-report@v1
+      with:
+        github-token: ${{ github.token }}
