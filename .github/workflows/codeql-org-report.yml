@@ -65,7 +65,7 @@ jobs:
             $markdownSummary
         }
     - name: Upload CodeQL Report CSV as Artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v7
       with:
         path: ./*.csv
         
